@@ -9,248 +9,71 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; font-family: 'Nunito', sans-serif; background: #111; }
+    html, body { width: 100%; height: 100%; font-family: 'Nunito', sans-serif; background: #1a1a2e; }
 
-    #join-screen {
-      width: 100%;
-      height: 100svh;
-      background: #1a1a2e;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      padding: 32px;
-    }
+    .screen { display: none; width: 100%; height: 100svh; flex-direction: column; align-items: center; justify-content: center; position: relative; }
 
-    #join-screen h1 {
-      font-size: 32px;
-      font-weight: 900;
-      color: #fff;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-
-    #join-screen input {
-      width: 100%;
-      max-width: 280px;
-      padding: 14px 18px;
-      border-radius: 14px;
-      border: 0.5px solid rgba(255,255,255,0.2);
-      background: rgba(255,255,255,0.08);
-      color: #fff;
-      font-family: 'Nunito', sans-serif;
-      font-size: 16px;
-      font-weight: 700;
-      text-align: center;
-      outline: none;
-    }
-
+    /* JOIN */
+    #join-screen { background: #1a1a2e; gap: 16px; padding: 32px; display: flex; }
+    #join-screen h1 { font-size: 32px; font-weight: 900; color: #fff; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+    #join-screen input { width: 100%; max-width: 280px; padding: 14px 18px; border-radius: 14px; border: 0.5px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); color: #fff; font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 700; text-align: center; outline: none; }
     #join-screen input::placeholder { color: rgba(255,255,255,0.3); }
     #join-screen input:focus { border-color: rgba(255,255,255,0.4); }
-
-    #join-screen button {
-      width: 100%;
-      max-width: 280px;
-      padding: 14px 0;
-      border-radius: 14px;
-      border: none;
-      background: #1D9E75;
-      color: #fff;
-      font-family: 'Nunito', sans-serif;
-      font-size: 18px;
-      font-weight: 900;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      cursor: pointer;
-    }
-
+    #join-screen button { width: 100%; max-width: 280px; padding: 14px 0; border-radius: 14px; border: none; background: #1D9E75; color: #fff; font-family: 'Nunito', sans-serif; font-size: 18px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; }
     #join-screen button:active { transform: scale(0.97); }
+    #join-error { font-size: 13px; font-weight: 700; color: #E24B4A; min-height: 18px; }
 
-    #join-error {
-      font-size: 13px;
-      font-weight: 700;
-      color: #E24B4A;
-      min-height: 18px;
-    }
+    /* TOP BAR */
+    .top-bar { position: absolute; top: 0; left: 0; right: 0; padding: 18px 20px; display: flex; justify-content: space-between; }
+    .top-bar span { font-size: 15px; font-weight: 900; color: rgba(255,255,255,0.6); }
 
     /* WAITING */
-    #waiting-screen {
-      display: none;
-      width: 100%;
-      height: 100svh;
-      background: #1a1a2e;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      position: relative;
-    }
-
-    #waiting-screen .top-bar {
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      padding: 18px 20px;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    #waiting-screen .top-bar span {
-      font-size: 15px;
-      font-weight: 900;
-      color: rgba(255,255,255,0.6);
-    }
-
-    #waiting-screen .wait-text {
-      font-size: 14px;
-      font-weight: 700;
-      color: rgba(255,255,255,0.3);
-      letter-spacing: 0.5px;
-    }
+    #waiting-screen { background: #1a1a2e; gap: 10px; }
+    .wait-text { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.3); letter-spacing: 0.5px; }
 
     /* GAME */
-    #game-screen {
-      display: none;
-      width: 100%;
-      height: 100svh;
-      background: #1D9E75;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-      position: relative;
-      overflow: hidden;
-      transition: background-color 0.25s ease;
-    }
-
+    #game-screen { background: #1D9E75; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; overflow: hidden; transition: background-color 0.25s ease; }
+    #game-screen .top-bar span { color: rgba(255,255,255,0.75); }
     #game-screen.falso { background: #E24B4A; }
-
-    #game-screen .top-bar {
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      padding: 18px 20px;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    #game-screen .top-bar span {
-      font-size: 15px;
-      font-weight: 900;
-      color: rgba(255,255,255,0.75);
-    }
-
-    #game-icon {
-      width: 90px;
-      height: 90px;
-      opacity: 0.28;
-      margin-bottom: 14px;
-    }
-
+    #game-icon { width: 90px; height: 90px; opacity: 0.28; margin-bottom: 14px; }
     #game-icon path { stroke: #fff; }
-
-    #game-label {
-      font-size: 58px;
-      font-weight: 900;
-      color: #fff;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-    }
-
-    #game-hint {
-      position: absolute;
-      bottom: 24px;
-      font-size: 13px;
-      font-weight: 700;
-      color: rgba(255,255,255,0.45);
-      letter-spacing: 0.5px;
-    }
+    #game-label { font-size: 58px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 2px; }
+    #game-hint { position: absolute; bottom: 24px; font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.45); }
 
     /* RESULT */
-    #result-screen {
-      display: none;
-      width: 100%;
-      height: 100svh;
-      background: #1a1a2e;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      position: relative;
-    }
-
-    #result-screen .top-bar {
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      padding: 18px 20px;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    #result-screen .top-bar span {
-      font-size: 15px;
-      font-weight: 900;
-      color: rgba(255,255,255,0.6);
-    }
-
-    .result-emoji {
-      font-size: 52px;
-      margin-bottom: 6px;
-    }
-
-    .result-badge {
-      padding: 5px 18px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 900;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-
+    #result-screen { background: #1a1a2e; gap: 6px; }
+    .result-emoji { font-size: 52px; margin-bottom: 6px; }
+    .result-badge { padding: 5px 18px; border-radius: 20px; font-size: 12px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
     .result-badge.correct { background: rgba(29,158,117,0.2); color: #1D9E75; }
-    .result-badge.wrong   { background: rgba(226,75,74,0.2);  color: #E24B4A; }
+    #result-main { font-size: 40px; font-weight: 900; color: #fff; letter-spacing: 1px; }
+    #result-answer { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.35); }
+    #result-total { position: absolute; bottom: 28px; font-size: 13px; font-weight: 900; color: rgba(255,255,255,0.45); }
 
-    #result-main {
-      font-size: 40px;
-      font-weight: 900;
-      color: #fff;
-      letter-spacing: 1px;
-    }
+    /* WINNER */
+    #winner-screen { background: #1a1a2e; gap: 6px; overflow: hidden; }
+    .stars { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; }
+    .star { position: absolute; font-size: 20px; opacity: 0.12; }
+    .trophy { font-size: 72px; margin-bottom: 4px; animation: bounce 1.2s ease infinite; }
+    @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .vincitore-label { font-size: 12px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.35); }
+    .vincitore-name { font-size: 42px; font-weight: 900; color: #fff; letter-spacing: 1px; text-align: center; padding: 0 16px; }
+    .vincitore-pts { font-size: 15px; font-weight: 700; color: #1D9E75; margin-bottom: 8px; }
+    .podium { position: absolute; bottom: 0; left: 0; right: 0; padding: 12px 20px 24px; }
+    .podium-row { display: flex; align-items: center; padding: 6px 0; border-bottom: 0.5px solid rgba(255,255,255,0.06); }
+    .podium-row:last-child { border-bottom: none; }
+    .podium-pos { font-size: 12px; font-weight: 900; color: rgba(255,255,255,0.25); width: 20px; }
+    .podium-name { flex: 1; font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.5); padding-left: 8px; }
+    .podium-pts { font-size: 13px; font-weight: 900; color: rgba(255,255,255,0.35); }
+    .podium-row.first .podium-name { color: #fff; }
+    .podium-row.first .podium-pts { color: #1D9E75; }
 
-    #result-answer {
-      font-size: 13px;
-      font-weight: 700;
-      color: rgba(255,255,255,0.35);
-    }
-
-    #result-total {
-      position: absolute;
-      bottom: 28px;
-      font-size: 13px;
-      font-weight: 900;
-      color: rgba(255,255,255,0.45);
-    }
-
-    .ripple {
-      position: absolute;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.18);
-      transform: scale(0);
-      pointer-events: none;
-      width: 100px; height: 100px;
-      margin-left: -50px; margin-top: -50px;
-      animation: ripple-anim 0.55s ease-out forwards;
-    }
-
+    .ripple { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.18); transform: scale(0); pointer-events: none; width: 100px; height: 100px; margin-left: -50px; margin-top: -50px; animation: ripple-anim 0.55s ease-out forwards; }
     @keyframes ripple-anim { to { transform: scale(10); opacity: 0; } }
   </style>
 </head>
 <body>
 
-  <!-- JOIN -->
-  <div id="join-screen">
+  <div id="join-screen" class="screen" style="display:flex">
     <h1>Vero o Falso</h1>
     <input id="input-name" type="text" placeholder="Il tuo nome" maxlength="20" autocomplete="off"/>
     <input id="input-code" type="text" placeholder="Codice sala (es: K4F2)" maxlength="6" autocomplete="off" style="text-transform:uppercase"/>
@@ -258,35 +81,21 @@
     <button onclick="joinGame()">Entra →</button>
   </div>
 
-  <!-- WAITING -->
-  <div id="waiting-screen">
-    <div class="top-bar">
-      <span id="waiting-name"></span>
-      <span id="waiting-pts">0 pts</span>
-    </div>
+  <div id="waiting-screen" class="screen">
+    <div class="top-bar"><span id="waiting-name"></span><span id="waiting-pts">0 pts</span></div>
     <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
     <span class="wait-text">Aspetta la domanda...</span>
   </div>
 
-  <!-- GAME -->
-  <div id="game-screen" onclick="handleTap(event)">
-    <div class="top-bar">
-      <span id="gs-name"></span>
-      <span id="gs-pts">0 pts</span>
-    </div>
-    <svg id="game-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M5 12l5 5L20 7"/>
-    </svg>
+  <div id="game-screen" class="screen" onclick="handleTap(event)">
+    <div class="top-bar"><span id="gs-name"></span><span id="gs-pts">0 pts</span></div>
+    <svg id="game-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
     <span id="game-label">Vero</span>
     <span id="game-hint">Tocca per cambiare</span>
   </div>
 
-  <!-- RESULT -->
-  <div id="result-screen">
-    <div class="top-bar">
-      <span id="result-name"></span>
-      <span id="result-pts-bar">0 pts</span>
-    </div>
+  <div id="result-screen" class="screen">
+    <div class="top-bar"><span id="result-name"></span><span id="result-pts-bar">0 pts</span></div>
     <span class="result-emoji" id="result-emoji">🎉</span>
     <span class="result-badge" id="result-badge">+1 pt</span>
     <span id="result-main">Corretto!</span>
@@ -294,47 +103,59 @@
     <span id="result-total">Totale: 0 pts</span>
   </div>
 
+  <div id="winner-screen" class="screen">
+    <div class="stars">
+      <span class="star" style="top:6%;left:8%">⭐</span>
+      <span class="star" style="top:4%;left:72%">⭐</span>
+      <span class="star" style="top:14%;left:42%">✨</span>
+      <span class="star" style="top:18%;left:88%">⭐</span>
+      <span class="star" style="top:10%;left:25%">✨</span>
+      <span class="star" style="top:22%;left:60%">⭐</span>
+    </div>
+    <span class="trophy">🏆</span>
+    <span class="vincitore-label">Vincitore</span>
+    <span class="vincitore-name" id="winner-name"></span>
+    <span class="vincitore-pts" id="winner-pts"></span>
+    <div class="podium" id="podium"></div>
+  </div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-    const app = initializeApp({
-      databaseURL: "https://vero-falso-default-rtdb.europe-west1.firebasedatabase.app"
-    });
+    const app = initializeApp({ databaseURL: "https://vero-falso-default-rtdb.europe-west1.firebasedatabase.app" });
     const db = getDatabase(app);
 
-    let playerName = '';
-    let roomCode = '';
-    let currentAnswer = 'vero';
-    let myPts = 0;
+    let playerName = '', roomCode = '', currentAnswer = 'vero', myPts = 0;
+    const icons = { vero: '<path d="M5 12l5 5L20 7"/>', falso: '<path d="M18 6L6 18M6 6l12 12"/>' };
 
-    const icons = {
-      vero:  '<path d="M5 12l5 5L20 7"/>',
-      falso: '<path d="M18 6L6 18M6 6l12 12"/>'
-    };
+    function show(id) {
+      ['join-screen','waiting-screen','game-screen','result-screen','winner-screen'].forEach(s => {
+        document.getElementById(s).style.display = s === id ? 'flex' : 'none';
+      });
+    }
+
+    function updatePts() {
+      document.getElementById('gs-pts').textContent       = myPts + ' pts';
+      document.getElementById('waiting-pts').textContent  = myPts + ' pts';
+      document.getElementById('result-pts-bar').textContent = myPts + ' pts';
+      document.getElementById('result-total').textContent = 'Totale: ' + myPts + ' pts';
+    }
 
     window.joinGame = async function() {
       const name = document.getElementById('input-name').value.trim();
       const code = document.getElementById('input-code').value.trim().toUpperCase();
       const err  = document.getElementById('join-error');
-
       if (!name) { err.textContent = 'Inserisci il tuo nome'; return; }
       if (!code) { err.textContent = 'Inserisci il codice sala'; return; }
-
-      const roomSnap = await get(ref(db, `rooms/${code}`));
-      if (!roomSnap.exists()) { err.textContent = 'Sala non trovata'; return; }
-
-      playerName = name;
-      roomCode   = code;
-
+      const snap = await get(ref(db, `rooms/${code}`));
+      if (!snap.exists()) { err.textContent = 'Sala non trovata'; return; }
+      playerName = name; roomCode = code;
       await set(ref(db, `rooms/${code}/players/${name}`), { pts: 0, answer: null });
-
-      document.getElementById('join-screen').style.display    = 'none';
-      document.getElementById('waiting-screen').style.display = 'flex';
-      document.getElementById('waiting-name').textContent     = name;
-      document.getElementById('gs-name').textContent          = name;
-      document.getElementById('result-name').textContent      = name;
-
+      document.getElementById('waiting-name').textContent = name;
+      document.getElementById('gs-name').textContent = name;
+      document.getElementById('result-name').textContent = name;
+      show('waiting-screen');
       listenToRoom();
     };
 
@@ -342,93 +163,69 @@
       onValue(ref(db, `rooms/${roomCode}/round`), snap => {
         const round = snap.val();
         if (!round) return;
-
-        if (round.status === 'waiting' || round.status === 'lobby') {
-          showWaiting();
-        }
-
+        if (round.status === 'waiting') show('waiting-screen');
         if (round.status === 'open') {
           currentAnswer = 'vero';
           set(ref(db, `rooms/${roomCode}/players/${playerName}/answer`), 'vero');
-          showGame();
+          const gs = document.getElementById('game-screen');
+          gs.classList.remove('falso');
+          document.getElementById('game-icon').innerHTML = icons.vero;
+          document.getElementById('game-label').textContent = 'Vero';
+          show('game-screen');
         }
-
         if (round.status === 'revealed' && round.correct) {
           get(ref(db, `rooms/${roomCode}/players/${playerName}/answer`)).then(s => {
             const myAns = s.val();
             const correct = myAns === round.correct;
             if (correct) myPts += 1;
-            updatePtsDisplay();
-            showResult(correct, myAns);
+            updatePts();
+            document.getElementById('result-emoji').textContent  = correct ? '🎉' : '😢';
+            document.getElementById('result-badge').textContent  = correct ? '+1 pt' : '';
+            document.getElementById('result-badge').className    = correct ? 'result-badge correct' : 'result-badge';
+            document.getElementById('result-badge').style.display = correct ? '' : 'none';
+            document.getElementById('result-main').textContent   = correct ? 'Corretto!' : 'Sbagliato!';
+            document.getElementById('result-answer').textContent = myAns ? 'Hai risposto: ' + myAns.charAt(0).toUpperCase() + myAns.slice(1) : '';
+            show('result-screen');
+          });
+        }
+        if (round.status === 'finished') {
+          get(ref(db, `rooms/${roomCode}/players`)).then(s => {
+            const players = s.val() || {};
+            const sorted = Object.entries(players).sort((a,b) => (b[1].pts||0) - (a[1].pts||0));
+            const [winnerName, winnerData] = sorted[0];
+            document.getElementById('winner-name').textContent = winnerName;
+            document.getElementById('winner-pts').textContent  = winnerData.pts + ' pt';
+            const podium = document.getElementById('podium');
+            podium.innerHTML = sorted.slice(0,4).map(([name, data], i) => `
+              <div class="podium-row ${i===0?'first':''}">
+                <span class="podium-pos">${i+1}</span>
+                <span class="podium-name">${name}</span>
+                <span class="podium-pts">${data.pts||0} pt</span>
+              </div>
+            `).join('');
+            show('winner-screen');
           });
         }
       });
 
       onValue(ref(db, `rooms/${roomCode}/players/${playerName}/pts`), snap => {
-        if (snap.val() !== null && snap.val() !== undefined) {
-          myPts = snap.val();
-          updatePtsDisplay();
-        }
+        if (snap.val() !== null && snap.val() !== undefined) { myPts = snap.val(); updatePts(); }
       });
     }
 
-    function updatePtsDisplay() {
-      document.getElementById('gs-pts').textContent        = myPts + ' pts';
-      document.getElementById('waiting-pts').textContent   = myPts + ' pts';
-      document.getElementById('result-pts-bar').textContent = myPts + ' pts';
-      document.getElementById('result-total').textContent  = 'Totale: ' + myPts + ' pts';
-    }
-
-    function showWaiting() {
-      document.getElementById('waiting-screen').style.display = 'flex';
-      document.getElementById('game-screen').style.display    = 'none';
-      document.getElementById('result-screen').style.display  = 'none';
-    }
-
-    function showGame() {
-      const gs = document.getElementById('game-screen');
-      gs.classList.remove('falso');
-      document.getElementById('game-icon').innerHTML = icons.vero;
-      document.getElementById('game-label').textContent = 'Vero';
-      document.getElementById('game-hint').textContent  = 'Tocca per cambiare';
-      document.getElementById('waiting-screen').style.display = 'none';
-      document.getElementById('result-screen').style.display  = 'none';
-      gs.style.display = 'flex';
-    }
-
-    function showResult(correct, myAns) {
-      document.getElementById('result-emoji').textContent  = correct ? '🎉' : '😢';
-      document.getElementById('result-badge').textContent  = correct ? '+1 pt' : '';
-      document.getElementById('result-badge').className    = correct ? 'result-badge correct' : 'result-badge';
-      document.getElementById('result-badge').style.display = correct ? '' : 'none';
-      document.getElementById('result-main').textContent   = correct ? 'Corretto!' : 'Sbagliato!';
-      document.getElementById('result-answer').textContent = myAns ? 'Hai risposto: ' + myAns.charAt(0).toUpperCase() + myAns.slice(1) : '';
-      document.getElementById('game-screen').style.display   = 'none';
-      document.getElementById('waiting-screen').style.display = 'none';
-      document.getElementById('result-screen').style.display  = 'flex';
-    }
-
     window.handleTap = function(e) {
-      if (currentAnswer === 'vero') {
-        currentAnswer = 'falso';
-        document.getElementById('game-screen').classList.add('falso');
-        document.getElementById('game-icon').innerHTML = icons.falso;
-        document.getElementById('game-label').textContent = 'Falso';
-      } else {
-        currentAnswer = 'vero';
-        document.getElementById('game-screen').classList.remove('falso');
-        document.getElementById('game-icon').innerHTML = icons.vero;
-        document.getElementById('game-label').textContent = 'Vero';
-      }
-
+      currentAnswer = currentAnswer === 'vero' ? 'falso' : 'vero';
+      const gs = document.getElementById('game-screen');
+      gs.classList.toggle('falso', currentAnswer === 'falso');
+      document.getElementById('game-icon').innerHTML = icons[currentAnswer];
+      document.getElementById('game-label').textContent = currentAnswer.charAt(0).toUpperCase() + currentAnswer.slice(1);
+      set(ref(db, `rooms/${roomCode}/players/${playerName}/answer`), currentAnswer);
       const ripple = document.createElement('span');
       ripple.className = 'ripple';
       ripple.style.left = e.clientX + 'px';
       ripple.style.top  = e.clientY + 'px';
-      document.getElementById('game-screen').appendChild(ripple);
+      gs.appendChild(ripple);
       ripple.addEventListener('animationend', () => ripple.remove());
-
-      set(ref(db, `rooms/${roomCode}/players/${playerName}/answer`), currentAnswer);
     };
   </script>
 </body>
