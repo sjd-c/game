@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vero o Falso</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; font-family: 'Nunito', sans-serif; }
+    body { display: flex; align-items: center; justify-content: center; background: #f0f0f0; }
+
+    #game-screen {
+      width: 100%;
+      max-width: 480px;
+      height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      background-color: #1D9E75;
+      position: relative;
+      overflow: hidden;
+      transition: background-color 0.25s ease;
+    }
+
+    #game-screen.falso { background-color: #E24B4A; }
+
+    #icon {
+      width: 90px;
+      height: 90px;
+      opacity: 0.30;
+      margin-bottom: 14px;
+    }
+
+    #icon path { stroke: #fff; }
+
+    #label {
+      font-size: 64px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: #fff;
+      text-transform: uppercase;
+    }
+
+    #hint {
+      position: absolute;
+      bottom: 28px;
+      font-size: 14px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.5px;
+    }
+
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+      transform: scale(0);
+      pointer-events: none;
+      width: 100px;
+      height: 100px;
+      margin-left: -50px;
+      margin-top: -50px;
+      animation: ripple-anim 0.55s ease-out forwards;
+    }
+
+    @keyframes ripple-anim { to { transform: scale(10); opacity: 0; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      #game-screen { transition: none; }
+      .ripple { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <div id="game-screen" role="button" aria-pressed="false" tabindex="0" aria-label="Vero o Falso – tocca per cambiare">
+
+    <!-- Icona: check (vero) -->
+    <svg id="icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M5 12l5 5L20 7" />
+    </svg>
+
+    <span id="label">Vero</span>
+    <span id="hint">Tocca per cambiare</span>
+  </div>
+
+  <script>
+    const screen = document.getElementById('game-screen');
+    const label  = document.getElementById('label');
+    const icon   = document.getElementById('icon');
+    let isVero = true;
+
+    const icons = {
+      vero:  '<path d="M5 12l5 5L20 7" />',
+      falso: '<path d="M18 6L6 18M6 6l12 12" />'
+    };
+
+    function toggle(x, y) {
+      isVero = !isVero;
+      screen.classList.toggle('falso', !isVero);
+      label.textContent = isVero ? 'Vero' : 'Falso';
+      icon.innerHTML = isVero ? icons.vero : icons.falso;
+      screen.setAttribute('aria-pressed', String(!isVero));
+
+      const ripple = document.createElement('span');
+      ripple.className = 'ripple';
+      ripple.style.left = x + 'px';
+      ripple.style.top  = y + 'px';
+      screen.appendChild(ripple);
+      ripple.addEventListener('animationend', () => ripple.remove());
+    }
+
+    screen.addEventListener('click', e => {
+      const r = screen.getBoundingClientRect();
+      toggle(e.clientX - r.left, e.clientY - r.top);
+    });
+
+    screen.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        const r = screen.getBoundingClientRect();
+        toggle(r.width / 2, r.height / 2);
+      }
+    });
+  </script>
+</body>
+</html>
