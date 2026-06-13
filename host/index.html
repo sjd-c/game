@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Host · Vero o Falso</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; min-height: 100%; font-family: 'Nunito', sans-serif; background: #1a1a2e; color: #fff; }
+
+    /* SETUP */
+    #setup-screen {
+      width: 100%;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 32px;
+    }
+
+    #setup-screen h1 {
+      font-size: 28px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      text-align: center;
+    }
+
+    #setup-screen p {
+      font-size: 13px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.35);
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    #setup-screen input {
+      width: 100%;
+      max-width: 280px;
+      padding: 13px 16px;
+      border-radius: 12px;
+      border: 0.5px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.07);
+      color: #fff;
+      font-family: 'Nunito', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      text-align: center;
+      outline: none;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    #setup-screen input::placeholder { color: rgba(255,255,255,0.25); text-transform: none; letter-spacing: 0; }
+    #setup-screen input:focus { border-color: rgba(255,255,255,0.4); }
+
+    #setup-screen button {
+      width: 100%;
+      max-width: 280px;
+      padding: 14px 0;
+      border-radius: 12px;
+      border: none;
+      background: #1D9E75;
+      color: #fff;
+      font-family: 'Nunito', sans-serif;
+      font-size: 17px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    #setup-screen button:active { transform: scale(0.97); }
+
+    /* LOBBY */
+    #lobby-screen {
+      display: none;
+      width: 100%;
+      min-height: 100svh;
+      flex-direction: column;
+      padding: 24px 16px;
+      gap: 16px;
+    }
+
+    .lobby-code {
+      background: rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .lobby-code .label {
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.35);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .lobby-code .code {
+      font-size: 40px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 6px;
+    }
+
+    .lobby-code .url {
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.3);
+      margin-top: 6px;
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 8px;
+    }
+
+    .players-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 36px;
+    }
+
+    .player-chip {
+      background: rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .no-players {
+      font-size: 13px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.2);
+    }
+
+    .btn-start {
+      width: 100%;
+      padding: 15px 0;
+      border-radius: 12px;
+      border: none;
+      background: #1D9E75;
+      color: #fff;
+      font-family: 'Nunito', sans-serif;
+      font-size: 17px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-top: auto;
+    }
+
+    .btn-start:active { transform: scale(0.98); }
+
+    /* GAME */
+    #game-screen {
+      display: none;
+      width: 100%;
+      min-height: 100svh;
+      flex-direction: column;
+      padding: 20px 16px 24px;
+      gap: 14px;
+    }
+
+    .top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .game-title {
+      font-size: 17px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 1px;
+    }
+
+    .sala-badge {
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 1px;
+    }
+
+    .round-info {
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.35);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .answer-btns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn-vero, .btn-falso {
+      border: none;
+      border-radius: 14px;
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+
+    .btn-vero { background: #1D9E75; }
+    .btn-falso { background: #E24B4A; }
+    .btn-vero:active, .btn-falso:active { transform: scale(0.97); }
+    .btn-vero.disabled, .btn-falso.disabled { opacity: 0.3; pointer-events: none; }
+    .btn-vero.selected { outline: 3px solid #fff; }
+    .btn-falso.selected { outline: 3px solid #fff; }
+
+    .btn-vero svg, .btn-falso svg { width: 28px; height: 28px; opacity: 0.5; }
+    .btn-vero svg path, .btn-falso svg path { stroke: #fff; }
+
+    .ans-label {
+      font-family: 'Nunito', sans-serif;
+      font-size: 20px;
+      font-weight: 900;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .responses-bar {
+      background: rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .responses-bar span { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.4); }
+    .responses-bar strong { font-size: 15px; font-weight: 900; color: #fff; }
+
+    .state-msg {
+      font-size: 13px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.35);
+      text-align: center;
+      min-height: 18px;
+    }
+
+    .state-msg.highlight { color: rgba(255,255,255,0.75); }
+
+    .btn-next {
+      width: 100%;
+      padding: 14px 0;
+      border-radius: 12px;
+      border: 0.5px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.06);
+      font-family: 'Nunito', sans-serif;
+      font-size: 16px;
+      font-weight: 900;
+      color: rgba(255,255,255,0.3);
+      cursor: default;
+      letter-spacing: 0.5px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .btn-next.active {
+      background: rgba(255,255,255,0.14);
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .btn-next.active:hover {
+      background: rgba(255,255,255,0.22);
+      color: #000;
+    }
+
+    .btn-next.active:active { transform: scale(0.98); }
+
+    .scoreboard { display: flex; flex-direction: column; gap: 0; }
+
+    .score-row {
+      display: flex;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 0.5px solid rgba(255,255,255,0.06);
+      transition: background 0.4s;
+    }
+
+    .score-row:last-child { border-bottom: none; }
+    .score-row.flash { animation: flashg 0.5s ease; }
+    @keyframes flashg { 40% { background: rgba(29,158,117,0.2); border-radius: 8px; } }
+
+    .score-pos { font-size: 12px; font-weight: 900; color: rgba(255,255,255,0.25); width: 20px; }
+    .score-name { flex: 1; font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.8); padding-left: 8px; }
+    .score-pts { font-size: 16px; font-weight: 900; color: #1D9E75; }
+  </style>
+</head>
+<body>
+
+  <!-- SETUP -->
+  <div id="setup-screen">
+    <h1>Vero o Falso</h1>
+    <p>Crea una sala e condividi il codice</p>
+    <input id="input-code" type="text" placeholder="Codice sala (es: K4F2)" maxlength="6" autocomplete="off"/>
+    <button onclick="createRoom()">Crea sala →</button>
+  </div>
+
+  <!-- LOBBY -->
+  <div id="lobby-screen">
+    <div class="lobby-code">
+      <div class="label">Codice sala</div>
+      <div class="code" id="lobby-code-display"></div>
+      <div class="url">sjd-c.github.io/game</div>
+    </div>
+    <div>
+      <div class="section-title">Giocatori connessi</div>
+      <div class="players-list" id="lobby-players">
+        <span class="no-players">Nessuno ancora...</span>
+      </div>
+    </div>
+    <button class="btn-start" onclick="startGame()">Inizia il gioco →</button>
+  </div>
+
+  <!-- GAME -->
+  <div id="game-screen">
+    <div class="top-row">
+      <span class="game-title">Vero o Falso</span>
+      <span class="sala-badge" id="game-code-badge"></span>
+    </div>
+    <div class="round-info" id="round-info">Rodada 1 · Toca para revelar</div>
+    <div class="answer-btns">
+      <button class="btn-vero" id="btn-vero" onclick="reveal('vero')">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+        <span class="ans-label">Vero</span>
+      </button>
+      <button class="btn-falso" id="btn-falso" onclick="reveal('falso')">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        <span class="ans-label">Falso</span>
+      </button>
+    </div>
+    <div class="responses-bar">
+      <span>Respostas recebidas</span>
+      <strong id="resp-count">0 / 0</strong>
+    </div>
+    <div class="state-msg" id="state-msg">Scegli la risposta corretta 👆</div>
+    <button class="btn-next" id="btn-next" onclick="nextRound()">Prossima domanda →</button>
+    <div>
+      <div class="section-title">Placar</div>
+      <div class="scoreboard" id="scoreboard"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, set, get, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    const app = initializeApp({
+      databaseURL: "https://vero-falso-default-rtdb.europe-west1.firebasedatabase.app"
+    });
+    const db = getDatabase(app);
+
+    let roomCode = '';
+    let roundNum  = 1;
+    let revealed  = false;
+    let players   = {};
+    let totalPlayers = 0;
+    let answeredCount = 0;
+
+    window.createRoom = function() {
+      const code = document.getElementById('input-code').value.trim().toUpperCase();
+      if (!code) return;
+      roomCode = code;
+
+      set(ref(db, `rooms/${code}`), {
+        status: 'lobby',
+        round: { status: 'waiting', correct: null }
+      }).then(() => {
+        document.getElementById('setup-screen').style.display = 'none';
+        document.getElementById('lobby-screen').style.display = 'flex';
+        document.getElementById('lobby-code-display').textContent = code;
+        document.getElementById('game-code-badge').textContent = 'Sala: ' + code;
+        listenPlayers();
+      });
+    };
+
+    function listenPlayers() {
+      onValue(ref(db, `rooms/${roomCode}/players`), snap => {
+        players = snap.val() || {};
+        totalPlayers = Object.keys(players).length;
+
+        const list = document.getElementById('lobby-players');
+        if (list) {
+          list.innerHTML = totalPlayers === 0
+            ? '<span class="no-players">Nessuno ancora...</span>'
+            : Object.keys(players).map(n => `<span class="player-chip">${n}</span>`).join('');
+        }
+
+        updateResponseCount();
+        renderScoreboard();
+      });
+    }
+
+    function updateResponseCount() {
+      answeredCount = Object.values(players).filter(p => p.answer !== null && p.answer !== undefined).length;
+      const el = document.getElementById('resp-count');
+      if (el) el.textContent = `${answeredCount} / ${totalPlayers}`;
+    }
+
+    window.startGame = function() {
+      set(ref(db, `rooms/${roomCode}/round`), { status: 'open', correct: null });
+      document.getElementById('lobby-screen').style.display = 'none';
+      document.getElementById('game-screen').style.display  = 'flex';
+      roundNum = 1;
+      revealed = false;
+      updateRoundInfo();
+
+      onValue(ref(db, `rooms/${roomCode}/players`), snap => {
+        players = snap.val() || {};
+        totalPlayers = Object.keys(players).length;
+        updateResponseCount();
+        renderScoreboard();
+      });
+    };
+
+    window.reveal = function(answer) {
+      if (revealed) return;
+      revealed = true;
+
+      document.getElementById('btn-' + answer).classList.add('selected');
+      document.getElementById('btn-' + (answer === 'vero' ? 'falso' : 'vero')).classList.add('disabled');
+
+      set(ref(db, `rooms/${roomCode}/round`), { status: 'revealed', correct: answer });
+
+      const winners = [];
+      const updates = {};
+      Object.entries(players).forEach(([name, data]) => {
+        if (data.answer === answer) {
+          const newPts = (data.pts || 0) + 1;
+          updates[`rooms/${roomCode}/players/${name}/pts`] = newPts;
+          winners.push(name);
+        }
+      });
+
+      if (Object.keys(updates).length > 0) update(ref(db), updates);
+
+      const msg = document.getElementById('state-msg');
+      msg.textContent = winners.length > 0 ? `+1 pt: ${winners.join(', ')}` : 'Nessuno ha risposto correttamente';
+      msg.classList.add('highlight');
+
+      document.getElementById('round-info').textContent = `Rodada ${roundNum} · Risposta: ${answer.toUpperCase()}`;
+      document.getElementById('btn-next').classList.add('active');
+    };
+
+    window.nextRound = function() {
+      if (!revealed) return;
+      roundNum++;
+      revealed = false;
+
+      const updates = {};
+      Object.keys(players).forEach(name => {
+        updates[`rooms/${roomCode}/players/${name}/answer`] = null;
+      });
+      update(ref(db), updates);
+
+      set(ref(db, `rooms/${roomCode}/round`), { status: 'open', correct: null });
+
+      document.getElementById('btn-vero').classList.remove('selected', 'disabled');
+      document.getElementById('btn-falso').classList.remove('selected', 'disabled');
+      document.getElementById('btn-next').classList.remove('active');
+      document.getElementById('state-msg').textContent = 'Scegli la risposta corretta 👆';
+      document.getElementById('state-msg').classList.remove('highlight');
+      updateRoundInfo();
+    };
+
+    function updateRoundInfo() {
+      document.getElementById('round-info').textContent = `Rodada ${roundNum} · Toca para revelar`;
+    }
+
+    function renderScoreboard(changedNames) {
+      const sb = document.getElementById('scoreboard');
+      if (!sb) return;
+      const sorted = Object.entries(players).sort((a,b) => (b[1].pts||0) - (a[1].pts||0));
+      sb.innerHTML = sorted.map(([name, data], i) => `
+        <div class="score-row ${changedNames && changedNames.includes(name) ? 'flash' : ''}">
+          <span class="score-pos">${i+1}</span>
+          <span class="score-name">${name}</span>
+          <span class="score-pts">${data.pts || 0} pt</span>
+        </div>
+      `).join('');
+    }
+  </script>
+</body>
+</html>
