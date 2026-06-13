@@ -349,6 +349,7 @@
 
         if (round.status === 'open') {
           currentAnswer = 'vero';
+          set(ref(db, `rooms/${roomCode}/players/${playerName}/answer`), 'vero');
           showGame();
         }
 
@@ -398,7 +399,8 @@
     function showResult(correct, myAns) {
       document.getElementById('result-emoji').textContent  = correct ? '🎉' : '😢';
       document.getElementById('result-badge').textContent  = correct ? '+1 pt' : '';
-      document.getElementById('result-badge').className    = 'result-badge ' + (correct ? 'correct' : 'wrong');
+      document.getElementById('result-badge').className    = correct ? 'result-badge correct' : 'result-badge';
+      document.getElementById('result-badge').style.display = correct ? '' : 'none';
       document.getElementById('result-main').textContent   = correct ? 'Corretto!' : 'Sbagliato!';
       document.getElementById('result-answer').textContent = myAns ? 'Hai risposto: ' + myAns.charAt(0).toUpperCase() + myAns.slice(1) : '';
       document.getElementById('game-screen').style.display   = 'none';
