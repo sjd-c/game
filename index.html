@@ -1,60 +1,234 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Vero o Falso</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; font-family: 'Nunito', sans-serif; }
-    body { display: flex; align-items: center; justify-content: center; background: #f0f0f0; }
+    html, body { width: 100%; height: 100%; font-family: 'Nunito', sans-serif; background: #111; }
 
-    #game-screen {
+    /* JOIN SCREEN */
+    #join-screen {
       width: 100%;
-      max-width: 480px;
       height: 100svh;
+      background: #1a1a2e;
       display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 32px;
+    }
+
+    #join-screen h1 {
+      font-size: 32px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    #join-screen input {
+      width: 100%;
+      max-width: 280px;
+      padding: 14px 18px;
+      border-radius: 14px;
+      border: 0.5px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      font-family: 'Nunito', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      text-align: center;
+      outline: none;
+    }
+
+    #join-screen input::placeholder { color: rgba(255,255,255,0.3); }
+    #join-screen input:focus { border-color: rgba(255,255,255,0.4); }
+
+    #join-screen button {
+      width: 100%;
+      max-width: 280px;
+      padding: 14px 0;
+      border-radius: 14px;
+      border: none;
+      background: #1D9E75;
+      color: #fff;
+      font-family: 'Nunito', sans-serif;
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    #join-screen button:active { transform: scale(0.97); }
+
+    #join-error {
+      font-size: 13px;
+      font-weight: 700;
+      color: #E24B4A;
+      min-height: 18px;
+    }
+
+    /* WAITING SCREEN */
+    #waiting-screen {
+      display: none;
+      width: 100%;
+      height: 100svh;
+      background: #1a1a2e;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    #waiting-screen .name-badge {
+      background: rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 6px 18px;
+      font-size: 15px;
+      font-weight: 900;
+      color: rgba(255,255,255,0.75);
+    }
+
+    #waiting-screen .waiting-text {
+      font-size: 14px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.5px;
+    }
+
+    /* GAME SCREEN */
+    #game-screen {
+      display: none;
+      width: 100%;
+      height: 100svh;
+      background: #1D9E75;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
-      background-color: #1D9E75;
       position: relative;
       overflow: hidden;
       transition: background-color 0.25s ease;
     }
 
-    #game-screen.falso { background-color: #E24B4A; }
+    #game-screen.falso { background: #E24B4A; }
+    #game-screen.answered { cursor: default; }
 
-    #icon {
+    .top-bar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .top-bar .player-name {
+      font-size: 15px;
+      font-weight: 900;
+      color: rgba(255,255,255,0.75);
+    }
+
+    .top-bar .player-pts {
+      font-size: 15px;
+      font-weight: 900;
+      color: rgba(255,255,255,0.75);
+    }
+
+    #game-icon {
       width: 90px;
       height: 90px;
-      opacity: 0.30;
+      opacity: 0.28;
       margin-bottom: 14px;
     }
 
-    #icon path { stroke: #fff; }
+    #game-icon path { stroke: #fff; }
 
-    #label {
-      font-size: 64px;
+    #game-label {
+      font-size: 58px;
       font-weight: 900;
-      letter-spacing: 2px;
       color: #fff;
       text-transform: uppercase;
+      letter-spacing: 2px;
     }
 
-    #hint {
+    #game-hint {
+      position: absolute;
+      bottom: 24px;
+      font-size: 13px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 0.5px;
+    }
+
+    .answered-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .answered-overlay span {
+      font-size: 18px;
+      font-weight: 900;
+      color: rgba(255,255,255,0.8);
+      letter-spacing: 1px;
+    }
+
+    /* RESULT SCREEN */
+    #result-screen {
+      display: none;
+      width: 100%;
+      height: 100svh;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    #result-screen.correct { background: #1D9E75; }
+    #result-screen.wrong   { background: #E24B4A; }
+
+    #result-screen .result-icon {
+      width: 80px; height: 80px;
+      opacity: 0.5;
+      margin-bottom: 12px;
+    }
+    #result-screen .result-icon path { stroke: #fff; }
+
+    #result-screen .result-text {
+      font-size: 36px;
+      font-weight: 900;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    #result-screen .result-pts {
+      margin-top: 10px;
+      font-size: 18px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.7);
+    }
+
+    #result-screen .total-pts {
       position: absolute;
       bottom: 28px;
-      font-size: 14px;
-      font-weight: 700;
-      color: rgba(255,255,255,0.5);
-      letter-spacing: 0.5px;
+      font-size: 15px;
+      font-weight: 900;
+      color: rgba(255,255,255,0.6);
     }
 
     .ripple {
@@ -63,71 +237,189 @@
       background: rgba(255,255,255,0.18);
       transform: scale(0);
       pointer-events: none;
-      width: 100px;
-      height: 100px;
-      margin-left: -50px;
-      margin-top: -50px;
+      width: 100px; height: 100px;
+      margin-left: -50px; margin-top: -50px;
       animation: ripple-anim 0.55s ease-out forwards;
     }
 
     @keyframes ripple-anim { to { transform: scale(10); opacity: 0; } }
-
-    @media (prefers-reduced-motion: reduce) {
-      #game-screen { transition: none; }
-      .ripple { animation: none; }
-    }
   </style>
 </head>
 <body>
-  <div id="game-screen" role="button" aria-pressed="false" tabindex="0" aria-label="Vero o Falso – tocca per cambiare">
 
-    <!-- Icona: check (vero) -->
-    <svg id="icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M5 12l5 5L20 7" />
-    </svg>
-
-    <span id="label">Vero</span>
-    <span id="hint">Tocca per cambiare</span>
+  <!-- JOIN -->
+  <div id="join-screen">
+    <h1>Vero o Falso</h1>
+    <input id="input-name" type="text" placeholder="Il tuo nome" maxlength="20" autocomplete="off"/>
+    <input id="input-code" type="text" placeholder="Codice sala (es: K4F2)" maxlength="6" autocomplete="off" style="text-transform:uppercase"/>
+    <div id="join-error"></div>
+    <button onclick="joinGame()">Entra →</button>
   </div>
 
-  <script>
-    const screen = document.getElementById('game-screen');
-    const label  = document.getElementById('label');
-    const icon   = document.getElementById('icon');
-    let isVero = true;
+  <!-- WAITING -->
+  <div id="waiting-screen">
+    <span class="name-badge" id="waiting-name"></span>
+    <span class="waiting-text">Aspetta la domanda...</span>
+  </div>
+
+  <!-- GAME -->
+  <div id="game-screen" onclick="handleTap(event)">
+    <div class="top-bar">
+      <span class="player-name" id="gs-name"></span>
+      <span class="player-pts" id="gs-pts">0 pts</span>
+    </div>
+    <svg id="game-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 12l5 5L20 7"/>
+    </svg>
+    <span id="game-label">Vero</span>
+    <span id="game-hint">Tocca per cambiare</span>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result-screen">
+    <svg class="result-icon" id="result-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 12l5 5L20 7"/>
+    </svg>
+    <span class="result-text" id="result-text">Corretto!</span>
+    <span class="result-pts" id="result-pts">+1 pt</span>
+    <span class="total-pts" id="result-total">Totale: 0 pts</span>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, set, get, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    const app = initializeApp({
+      databaseURL: "https://vero-falso-default-rtdb.europe-west1.firebasedatabase.app"
+    });
+    const db = getDatabase(app);
+
+    let playerName = '';
+    let roomCode = '';
+    let currentAnswer = 'vero';
+    let hasAnswered = false;
+    let myPts = 0;
+    let roundRef = null;
 
     const icons = {
-      vero:  '<path d="M5 12l5 5L20 7" />',
-      falso: '<path d="M18 6L6 18M6 6l12 12" />'
+      vero:  '<path d="M5 12l5 5L20 7"/>',
+      falso: '<path d="M18 6L6 18M6 6l12 12"/>'
     };
 
-    function toggle(x, y) {
-      isVero = !isVero;
-      screen.classList.toggle('falso', !isVero);
-      label.textContent = isVero ? 'Vero' : 'Falso';
-      icon.innerHTML = isVero ? icons.vero : icons.falso;
-      screen.setAttribute('aria-pressed', String(!isVero));
+    window.joinGame = async function() {
+      const name = document.getElementById('input-name').value.trim();
+      const code = document.getElementById('input-code').value.trim().toUpperCase();
+      const err  = document.getElementById('join-error');
+
+      if (!name) { err.textContent = 'Inserisci il tuo nome'; return; }
+      if (!code) { err.textContent = 'Inserisci il codice sala'; return; }
+
+      const roomSnap = await get(ref(db, `rooms/${code}`));
+      if (!roomSnap.exists()) { err.textContent = 'Sala non trovata'; return; }
+
+      playerName = name;
+      roomCode   = code;
+
+      await set(ref(db, `rooms/${code}/players/${name}`), { pts: 0, answer: null });
+
+      document.getElementById('join-screen').style.display    = 'none';
+      document.getElementById('waiting-screen').style.display = 'flex';
+      document.getElementById('waiting-name').textContent     = name;
+      document.getElementById('gs-name').textContent          = name;
+
+      listenToRoom();
+    };
+
+    function listenToRoom() {
+      onValue(ref(db, `rooms/${roomCode}/round`), snap => {
+        const round = snap.val();
+        if (!round) return;
+
+        if (round.status === 'waiting') {
+          hasAnswered  = false;
+          currentAnswer = 'vero';
+          showWaiting();
+        }
+
+        if (round.status === 'open') {
+          hasAnswered  = false;
+          currentAnswer = 'vero';
+          showGame();
+        }
+
+        if (round.status === 'revealed' && round.correct) {
+          const myAnswerSnap = ref(db, `rooms/${roomCode}/players/${playerName}/answer`);
+          get(myAnswerSnap).then(s => {
+            const myAns = s.val();
+            const correct = myAns === round.correct;
+            if (correct) myPts += 1;
+            showResult(correct, round.correct);
+          });
+        }
+      });
+
+      onValue(ref(db, `rooms/${roomCode}/players/${playerName}/pts`), snap => {
+        if (snap.val() !== null) {
+          myPts = snap.val();
+          document.getElementById('gs-pts').textContent = myPts + ' pts';
+        }
+      });
+    }
+
+    function showWaiting() {
+      document.getElementById('waiting-screen').style.display = 'flex';
+      document.getElementById('game-screen').style.display    = 'none';
+      document.getElementById('result-screen').style.display  = 'none';
+    }
+
+    function showGame() {
+      currentAnswer = 'vero';
+      const gs = document.getElementById('game-screen');
+      gs.classList.remove('falso', 'answered');
+      document.getElementById('game-icon').innerHTML = icons.vero;
+      document.getElementById('game-label').textContent = 'Vero';
+      document.getElementById('game-hint').textContent  = 'Tocca per cambiare';
+      document.getElementById('waiting-screen').style.display = 'none';
+      document.getElementById('result-screen').style.display  = 'none';
+      gs.style.display = 'flex';
+    }
+
+    function showResult(correct, correctAnswer) {
+      const rs = document.getElementById('result-screen');
+      rs.className = correct ? 'correct' : 'wrong';
+      document.getElementById('result-icon').innerHTML = correct ? icons.vero : icons.falso;
+      document.getElementById('result-text').textContent = correct ? 'Corretto!' : 'Sbagliato!';
+      document.getElementById('result-pts').textContent  = correct ? '+1 pt' : '+0 pt';
+      document.getElementById('result-total').textContent = 'Totale: ' + myPts + ' pts';
+      document.getElementById('game-screen').style.display   = 'none';
+      document.getElementById('waiting-screen').style.display = 'none';
+      rs.style.display = 'flex';
+    }
+
+    window.handleTap = function(e) {
+      if (hasAnswered) return;
+
+      if (currentAnswer === 'vero') {
+        currentAnswer = 'falso';
+        document.getElementById('game-screen').classList.add('falso');
+        document.getElementById('game-icon').innerHTML = icons.falso;
+        document.getElementById('game-label').textContent = 'Falso';
+      } else {
+        currentAnswer = 'vero';
+        document.getElementById('game-screen').classList.remove('falso');
+        document.getElementById('game-icon').innerHTML = icons.vero;
+        document.getElementById('game-label').textContent = 'Vero';
+      }
 
       const ripple = document.createElement('span');
       ripple.className = 'ripple';
-      ripple.style.left = x + 'px';
-      ripple.style.top  = y + 'px';
-      screen.appendChild(ripple);
+      ripple.style.left = e.clientX + 'px';
+      ripple.style.top  = e.clientY + 'px';
+      document.getElementById('game-screen').appendChild(ripple);
       ripple.addEventListener('animationend', () => ripple.remove());
-    }
 
-    screen.addEventListener('click', e => {
-      const r = screen.getBoundingClientRect();
-      toggle(e.clientX - r.left, e.clientY - r.top);
-    });
-
-    screen.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        const r = screen.getBoundingClientRect();
-        toggle(r.width / 2, r.height / 2);
-      }
-    });
+      set(ref(db, `rooms/${roomCode}/players/${playerName}/answer`), currentAnswer);
+    };
   </script>
 </body>
 </html>
