@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Configurazione — Host</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F4F3FF;min-height:100vh;padding-bottom:2rem;}
+.top-bar{background:#7F77DD;padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;}
+.top-title{font-size:17px;font-weight:700;color:#fff;}
+.top-sub{font-size:12px;color:rgba(255,255,255,0.75);margin-top:2px;}
+.back-link{font-size:13px;color:#CECBF6;text-decoration:none;font-weight:500;}
+.content{padding:1rem;max-width:480px;margin:0 auto;}
+.sec{font-size:11px;font-weight:700;letter-spacing:0.06em;color:#534AB7;text-transform:uppercase;margin-bottom:10px;margin-top:1.25rem;}
+.sec:first-child{margin-top:0;}
+.list-card{background:#fff;border:0.5px solid #EEEDFE;border-radius:14px;padding:1rem;margin-bottom:10px;}
+.list-name-inp{font-size:15px;font-weight:700;color:#26215C;border:none;background:transparent;outline:none;flex:1;width:100%;}
+.list-name-inp::placeholder{color:#CECBF6;}
+.list-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.count-pill{font-size:11px;padding:3px 10px;border-radius:99px;background:#EEEDFE;color:#534AB7;font-weight:600;white-space:nowrap;flex-shrink:0;}
+.qa-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;}
+.w-pill{font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;background:#EEEDFE;color:#3C3489;white-space:nowrap;flex-shrink:0;margin-top:2px;}
+.q-preview{font-size:13px;color:#888780;line-height:1.4;flex:1;}
+.del-pair{background:none;border:none;color:#D3D1C7;cursor:pointer;font-size:14px;padding:0 2px;flex-shrink:0;}
+.del-pair:hover{color:#E24B4A;}
+.divider{border:none;border-top:0.5px solid #F1EFE8;margin:10px 0;}
+.add-section{display:flex;flex-direction:column;gap:7px;}
+.add-row{display:flex;gap:6px;}
+.inp-word{width:100px;flex-shrink:0;padding:9px 10px;font-size:13px;font-weight:700;border:1.5px solid #EEEDFE;border-radius:10px;background:#F4F3FF;color:#26215C;outline:none;text-transform:uppercase;letter-spacing:0.04em;}
+.inp-word:focus{border-color:#7F77DD;}
+.inp-q{flex:1;padding:9px 10px;font-size:13px;border:1.5px solid #EEEDFE;border-radius:10px;background:#F4F3FF;color:#26215C;outline:none;}
+.inp-q:focus{border-color:#7F77DD;}
+.add-pair-btn{padding:9px 14px;font-size:13px;font-weight:600;background:#7F77DD;color:#fff;border:none;border-radius:10px;cursor:pointer;white-space:nowrap;}
+.bottom-row{display:flex;justify-content:space-between;align-items:center;margin-top:4px;}
+.del-list-btn{background:none;border:none;color:#B4B2A9;cursor:pointer;font-size:12px;display:flex;align-items:center;gap:4px;}
+.del-list-btn:hover{color:#E24B4A;}
+.new-list-btn{width:100%;padding:13px;border:0.5px dashed #CECBF6;border-radius:14px;background:transparent;color:#7F77DD;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;}
+.new-list-btn:hover{background:#EEEDFE;}
+.save-btn{width:100%;padding:14px;font-size:15px;font-weight:700;background:#7F77DD;color:#fff;border:none;border-radius:12px;cursor:pointer;margin-top:10px;}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:#26215C;color:#fff;padding:10px 20px;border-radius:99px;font-size:13px;font-weight:500;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div><div class="top-title">Configurazione</div><div class="top-sub">Crea liste di parole e domande</div></div>
+  <a class="back-link" href="index.html">← Sala giochi</a>
+</div>
+
+<div class="content">
+  <div class="sec">Le mie liste</div>
+  <div id="lists-container"></div>
+  <button class="new-list-btn" onclick="addList()">+ Nuova lista</button>
+  <button class="save-btn" onclick="saveLists()">Salva tutto</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import{getDatabase,ref,set,get}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig={databaseURL:"https://vero-falso-default-rtdb.europe-west1.firebasedatabase.app"};
+const app=initializeApp(firebaseConfig);
+const db=getDatabase(app);
+let lists=[];
+
+async function init(){
+  const snap=await get(ref(db,'wordlists'));
+  lists=snap.exists()?snap.val():[{id:Date.now(),name:'',pairs:[]}];
+  render();
+}
+
+window.addList=function(){lists.push({id:Date.now(),name:'',pairs:[]});render();};
+
+window.deleteList=function(id){lists=lists.filter(l=>l.id!==id);render();};
+
+window.addPair=function(id){
+  const word=document.getElementById('word-'+id).value.trim().toUpperCase();
+  const question=document.getElementById('q-'+id).value.trim();
+  if(!word||!question){showToast('Compila la parola e la domanda');return;}
+  const list=lists.find(l=>l.id===id);
+  if(!list)return;
+  list.pairs.push({word,question});
+  document.getElementById('word-'+id).value='';
+  document.getElementById('q-'+id).value='';
+  render();
+};
+
+window.deletePair=function(listId,idx){
+  const list=lists.find(l=>l.id===listId);
+  if(list){list.pairs.splice(idx,1);render();}
+};
+
+window.updateName=function(id,val){const list=lists.find(l=>l.id===id);if(list)list.name=val;};
+
+window.saveLists=async function(){
+  for(const l of lists){if(!l.name){showToast('Dai un nome a ogni lista');return;}}
+  await set(ref(db,'wordlists'),lists);
+  showToast('Salvato! ✓');
+};
+
+function render(){
+  document.getElementById('lists-container').innerHTML=lists.map(list=>`
+    <div class="list-card">
+      <div class="list-header">
+        <input class="list-name-inp" placeholder="Nome lista…" value="${list.name}" oninput="updateName(${list.id},this.value)"/>
+        <span class="count-pill">${list.pairs.length} parole</span>
+      </div>
+      ${list.pairs.map((p,i)=>`
+        <div class="qa-row">
+          <span class="w-pill">${p.word}</span>
+          <span class="q-preview">${p.question}</span>
+          <button class="del-pair" onclick="deletePair(${list.id},${i})" title="Elimina">✕</button>
+        </div>
+      `).join('')}
+      ${list.pairs.length>0?'<hr class="divider">':''}
+      <div class="add-section">
+        <div class="add-row">
+          <input class="inp-word" id="word-${list.id}" placeholder="PAROLA" />
+          <input class="inp-q" id="q-${list.id}" placeholder="Domanda o indizio…" />
+        </div>
+        <div class="bottom-row">
+          <button class="del-list-btn" onclick="deleteList(${list.id})">✕ Elimina lista</button>
+          <button class="add-pair-btn" onclick="addPair(${list.id})">+ Aggiungi</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+init();
+</script>
+</body>
+</html>
