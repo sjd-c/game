@@ -53,8 +53,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .btn-red{width:100%;padding:12px;font-size:14px;font-weight:600;background:#FCEBEB;color:#791F1F;border:none;border-radius:10px;cursor:pointer;}
 
 /* WINNER */
-#winner-screen{background:#F4F3FF;}
-.winner-top{background:#7F77DD;min-height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1.25rem;text-align:center;position:relative;overflow:hidden;}
+#winner-screen{background:#7F77DD;min-height:100vh;display:flex;flex-direction:column;}
+.winner-top{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1.25rem;text-align:center;position:relative;overflow:hidden;}
 .confetti-wrap{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;}
 .confetto{position:absolute;border-radius:2px;animation:fall linear infinite;}
 @keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(400px) rotate(720deg);opacity:0}}
@@ -62,12 +62,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 @keyframes trophyPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
 .winner-name{font-size:24px;font-weight:800;color:#fff;position:relative;z-index:1;}
 .winner-sub{font-size:13px;color:#CECBF6;margin-top:6px;position:relative;z-index:1;}
-.podium{padding:1rem;}
-.pod-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid #EEEDFE;}
+.podium{padding:0 1rem 1.5rem;}
+.podium-card{background:rgba(255,255,255,0.15);border-radius:16px;padding:0.5rem 1rem;}
+.pod-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid rgba(255,255,255,0.2);}
 .pod-row:last-child{border-bottom:none;}
 .pod-medal{font-size:18px;width:26px;text-align:center;}
-.pod-name{flex:1;font-size:14px;font-weight:500;color:#26215C;}
-.pod-pts{font-size:13px;color:#888780;}
+.pod-name{flex:1;font-size:14px;font-weight:600;color:#fff;}
+.pod-pts{font-size:13px;color:rgba(255,255,255,0.75);}
 .btn-back{display:block;text-align:center;margin:1rem;padding:13px;background:#7F77DD;color:#fff;font-size:15px;font-weight:700;border:none;border-radius:12px;text-decoration:none;cursor:pointer;}
 </style>
 </head>
@@ -125,8 +126,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="winner-name" id="w-name">—</div>
     <div class="winner-sub" id="w-sub"></div>
   </div>
-  <div class="podium" id="podium"></div>
-  <button class="btn-back" onclick="window.location.href='index.html'">Torna alla sala giochi</button>
+  <div class="podium"><div class="podium-card" id="podium"></div></div>
+  <button class="btn-back" style="display:block;margin:0 1rem 1.5rem;padding:13px;background:rgba(255,255,255,0.2);color:#fff;font-size:15px;font-weight:700;border:none;border-radius:12px;cursor:pointer;" onclick="window.location.href='index.html'">← Torna alla sala giochi</button>
 </div>
 
 <script type="module">
