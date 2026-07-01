@@ -151,15 +151,9 @@ onValue(ref(db,`rooms/${roomCode}/players`),snap=>{
   const total=Object.keys(players).length;
   const row=document.getElementById('lobby-players');
   row.innerHTML=total===0?'<span style="font-size:13px;color:#888780;">Nessuno ancora…</span>':Object.keys(players).map(n=>`<div class="p-chip"><div class="p-dot"></div>${n}</div>`).join('');
-  document.getElementById('resp-count').textContent=(Object.values(players).filter(p=>p.answer).length)+' / '+total;
+  const answered=Object.values(players).filter(p=>p.answer).length;
+  document.getElementById('resp-count').textContent=answered+' / '+total;
   renderScores();
-  onValue(ref(db,`rooms/${roomCode}/players`),snap2=>{
-    players=snap2.val()||{};
-    const answered=Object.values(players).filter(p=>p.answer).length;
-    const tot=Object.keys(players).length;
-    document.getElementById('resp-count').textContent=answered+' / '+tot;
-    renderScores();
-  });
 });
 
 function renderScores(){
