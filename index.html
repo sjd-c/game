@@ -286,7 +286,7 @@ function setVFState(v,answered){
 window.tapVF=function(){
   vfCurrent=vfCurrent==='vero'?'falso':'vero';
   hasAnswered=true;
-  setVFState(vfCurrent,true);
+  setVFState(vfCurrent,false);
   set(ref(db,`rooms/${roomCode}/players/${playerName}/answer`),vfCurrent);
 };
 
