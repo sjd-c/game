@@ -35,14 +35,15 @@ html,body{width:100%;height:100%;font-family:-apple-system,BlinkMacSystemFont,'S
 .wait-sub{font-size:14px;color:#888780;}
 
 /* ── VF GAME — fullscreen ── */
-#vf-screen{flex:1;flex-direction:column;}
+#vf-screen{flex:1;flex-direction:column;position:relative;}
 .vf-game{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;transition:background 0.2s;padding:2rem;}
 .vf-vero{background:#1D9E75;}
 .vf-falso{background:#E24B4A;}
 .vf-icon{width:64px;height:64px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
 .vf-word{font-size:48px;font-weight:800;color:#fff;letter-spacing:-1px;}
 .vf-hint{font-size:13px;color:rgba(255,255,255,0.7);}
-.vf-footer{padding:1rem;display:flex;justify-content:space-between;background:#F4F3FF;}
+.vf-footer{position:absolute;left:0;right:0;bottom:0;padding:1.25rem;display:flex;justify-content:space-between;background:transparent;pointer-events:none;}
+.vf-footer .name-badge,.vf-footer .pts-badge{pointer-events:auto;}
 .name-badge{background:#EEEDFE;color:#3C3489;border-radius:99px;padding:6px 16px;font-size:13px;font-weight:700;}
 .pts-badge{background:#E1F5EE;color:#085041;border-radius:99px;padding:6px 16px;font-size:13px;font-weight:700;}
 
@@ -379,10 +380,10 @@ function startWSTimer(seconds){
 function showWinner(scores){
   clearInterval(wsTimer);
   show('winner-screen');
-  if(!scores)return;
-  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
-  document.getElementById('w-name').textContent=(sorted[0]?.[0]||'—')+' vince!';
-  document.getElementById('w-sub').textContent='Con '+Math.round(sorted[0]?.[1]||0)+' punti totali';
+  const finalScores=(scores&&Object.keys(scores).length)?scores:{[playerName]:myPts};
+  const sorted=Object.entries(finalScores).sort((a,b)=>b[1]-a[1]);
+  document.getElementById('w-name').textContent=(sorted[0]?.[0]||playerName)+' vince!';
+  document.getElementById('w-sub').textContent='Con '+Math.round(sorted[0]?.[1]||myPts)+' punti totali';
   const medals=['🥇','🥈','🥉'];
   document.getElementById('podium').innerHTML=sorted.slice(0,4).map(([name,pts],i)=>
     `<div class="pod-row"><span class="pod-medal">${medals[i]||i+1}</span><span class="pod-name">${name}</span><span class="pod-pts">${Math.round(pts)} pt</span></div>`
