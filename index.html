@@ -241,7 +241,7 @@ function listenRoom(){
     if(!g)return;
     // Vero o Falso
     if(g.type==='vero-falso'){
-      if(g.status==='playing'&&g.round!==undefined){
+      if(g.status==='playing'&&g.round!==undefined&&!g.correct){
         // nuova manche — mostra gioco
         hasAnswered=false;vfCurrent='vero';
         setVFState('vero',false);
