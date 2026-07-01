@@ -2,404 +2,177 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>Sala giochi</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sala giochi — Host</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{width:100%;height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F4F3FF;min-height:100vh;padding-bottom:2rem;}
+.screen{display:none!important;}
+.screen.active{display:block!important;}
+.top-bar{background:#7F77DD;padding:1rem 1.25rem;}
+.bar-row{display:flex;justify-content:space-between;align-items:flex-start;}
+.bar-title{font-size:18px;font-weight:700;color:#fff;}
+.bar-sub{font-size:12px;color:rgba(255,255,255,0.75);margin-top:2px;}
+.bar-right-lbl{font-size:11px;color:rgba(255,255,255,0.7);text-align:right;}
+.bar-right-val{font-size:20px;font-weight:800;color:#fff;letter-spacing:0.1em;text-align:right;}
+.body{padding:1rem;}
+.sec{font-size:11px;font-weight:700;letter-spacing:0.06em;color:#534AB7;text-transform:uppercase;margin-bottom:8px;margin-top:1.25rem;}
+.sec:first-child{margin-top:0;}
+.players-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px;}
+.p-chip{display:flex;align-items:center;gap:5px;background:#fff;border:0.5px solid #EEEDFE;border-radius:99px;padding:4px 10px 4px 7px;font-size:13px;color:#26215C;}
+.p-dot{width:7px;height:7px;border-radius:50%;background:#1D9E75;flex-shrink:0;}
+.games-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+.game-card{background:#fff;border:0.5px solid #EEEDFE;border-radius:14px;padding:1rem;display:flex;flex-direction:column;gap:7px;min-height:128px;cursor:pointer;transition:border-color 0.15s,transform 0.1s;}
+.game-card:active{transform:scale(0.98);}
+.game-card:hover{border-color:#CECBF6;}
+.g-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.g-teal{background:#E1F5EE;}
+.g-purple{background:#EEEDFE;}
+.game-name{font-size:13px;font-weight:600;color:#26215C;}
+.game-desc{font-size:11px;color:#888780;line-height:1.4;flex:1;}
+.ready-pill{font-size:10px;padding:2px 8px;border-radius:99px;background:#E1F5EE;color:#0F6E56;font-weight:600;width:fit-content;}
+.empty-card{border:0.5px dashed #D3D1C7;border-radius:14px;min-height:128px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;color:#888780;font-size:12px;}
+.setup-link{display:block;text-align:center;margin-top:1rem;font-size:13px;color:#7F77DD;text-decoration:none;font-weight:600;}
 
-/* ── SCREENS ── */
-.screen{display:none;width:100%;min-height:100vh;flex-direction:column;}
-.screen.active{display:flex;}
-
-/* ── JOIN ── */
-#join-screen{align-items:center;justify-content:center;padding:2rem 1.5rem;background:#F4F3FF;}
-.join-logo{width:60px;height:60px;border-radius:18px;background:#7F77DD;display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;}
-.join-logo svg{width:28px;height:28px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
-.join-title{font-size:22px;font-weight:700;color:#26215C;margin-bottom:6px;}
-.join-sub{font-size:13px;color:#888780;margin-bottom:2rem;text-align:center;}
+/* CREATE ROOM */
+#create-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1.5rem;background:#F4F3FF;}
+#create-screen.screen{display:flex!important;}
+#create-screen.screen:not(.active){display:none!important;}
+.logo{width:60px;height:60px;border-radius:18px;background:#7F77DD;display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;}
+.logo svg{width:28px;height:28px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.page-title{font-size:22px;font-weight:700;color:#26215C;margin-bottom:6px;text-align:center;}
+.page-sub{font-size:13px;color:#888780;margin-bottom:2rem;text-align:center;}
 .card{background:#fff;border-radius:16px;border:0.5px solid #EEEDFE;padding:1.25rem;width:100%;max-width:340px;}
 .field-lbl{font-size:11px;font-weight:700;letter-spacing:0.06em;color:#534AB7;text-transform:uppercase;margin-bottom:6px;}
-.field-inp{width:100%;padding:11px 13px;font-size:15px;font-weight:600;border:1.5px solid #EEEDFE;border-radius:10px;background:#F4F3FF;color:#26215C;margin-bottom:4px;outline:none;}
+.field-inp{width:100%;padding:11px 13px;font-size:16px;font-weight:700;border:1.5px solid #EEEDFE;border-radius:10px;background:#F4F3FF;color:#26215C;margin-bottom:4px;outline:none;letter-spacing:0.08em;text-transform:uppercase;}
 .field-inp:focus{border-color:#7F77DD;background:#fff;}
-.field-inp.err{border-color:#E24B4A;background:#FFF0F0;}
-.err-msg{font-size:12px;color:#E24B4A;min-height:16px;margin-bottom:10px;}
-.btn-green{width:100%;padding:14px;font-size:15px;font-weight:700;background:#1D9E75;color:#fff;border:none;border-radius:10px;cursor:pointer;}
-.btn-green:disabled{background:#B4B2A9;cursor:not-allowed;}
-
-/* ── WAIT ── */
-#wait-screen{align-items:center;justify-content:center;background:#F4F3FF;text-align:center;padding:2rem;}
-.wait-emoji{font-size:48px;margin-bottom:1rem;animation:pulse 1.5s ease-in-out infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.35}}
-.wait-title{font-size:20px;font-weight:700;color:#26215C;margin-bottom:8px;}
-.wait-sub{font-size:14px;color:#888780;}
-
-/* ── VF GAME — fullscreen ── */
-#vf-screen{flex:1;flex-direction:column;position:relative;}
-.vf-game{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;transition:background 0.2s;padding:2rem;}
-.vf-vero{background:#1D9E75;}
-.vf-falso{background:#E24B4A;}
-.vf-icon{width:64px;height:64px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
-.vf-word{font-size:48px;font-weight:800;color:#fff;letter-spacing:-1px;}
-.vf-hint{font-size:13px;color:rgba(255,255,255,0.7);}
-.vf-footer{position:absolute;left:0;right:0;bottom:0;padding:1.25rem;display:flex;justify-content:space-between;background:transparent;pointer-events:none;}
-.vf-footer .name-badge,.vf-footer .pts-badge{pointer-events:auto;}
-.name-badge{background:#EEEDFE;color:#3C3489;border-radius:99px;padding:6px 16px;font-size:13px;font-weight:700;}
-.pts-badge{background:#E1F5EE;color:#085041;border-radius:99px;padding:6px 16px;font-size:13px;font-weight:700;}
-
-/* ── VF RESULT — fullscreen ── */
-#vf-result-screen{align-items:center;justify-content:center;background:#F4F3FF;padding:2rem;text-align:center;}
-.result-emoji{font-size:88px;line-height:1;margin-bottom:16px;animation:bounceIn 0.5s cubic-bezier(0.36,0.07,0.19,0.97);}
-@keyframes bounceIn{0%{transform:scale(0.2);opacity:0}60%{transform:scale(1.2)}100%{transform:scale(1);opacity:1}}
-.result-correct{font-size:28px;font-weight:800;color:#085041;margin-bottom:6px;}
-.result-wrong{font-size:28px;font-weight:800;color:#791F1F;margin-bottom:6px;}
-.result-pts{font-size:15px;color:#888780;margin-bottom:2rem;}
-.result-wait{background:#fff;border:0.5px solid #EEEDFE;border-radius:12px;padding:12px 16px;font-size:13px;color:#888780;width:100%;max-width:320px;text-align:center;}
-
-/* ── WS GAME ── */
-#ws-screen{background:#F4F3FF;padding:1rem;}
-.ws-top{display:flex;justify-content:space-between;margin-bottom:10px;}
-.timer-b{background:#FAEEDA;color:#633806;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;}
-.score-b{background:#E1F5EE;color:#085041;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;}
-.q-card{background:#7F77DD;border-radius:14px;padding:1.1rem;margin-bottom:12px;position:relative;overflow:hidden;}
-.q-deco{position:absolute;right:-12px;top:-12px;width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,0.1);}
-.q-lbl{font-size:10px;font-weight:700;letter-spacing:0.08em;color:#CECBF6;text-transform:uppercase;margin-bottom:5px;}
-.q-txt{font-size:15px;font-weight:600;color:#fff;line-height:1.4;position:relative;z-index:1;}
-.q-num{font-size:11px;color:#AFA9EC;margin-top:6px;}
-.prog-track{background:#EEEDFE;border-radius:99px;height:5px;overflow:hidden;margin-bottom:12px;}
-.prog-fill{height:5px;border-radius:99px;background:#7F77DD;transition:width 0.5s;}
-.ws-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:2px;touch-action:none;}
-.cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;border-radius:4px;background:#fff;color:#444441;user-select:none;}
-.cell.selecting{background:#EF9F27;color:#fff;}
-.cell.found{background:#1D9E75;color:#fff;}
-.cell.wrong{background:#E24B4A;color:#fff;animation:shake 0.3s ease;}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
-.ws-hint{text-align:center;font-size:11px;color:#888780;margin-top:8px;}
-
-/* ── WINNER ── */
-#winner-screen{background:#7F77DD;min-height:100vh;display:flex;flex-direction:column;}
-.winner-top{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1.25rem;text-align:center;position:relative;overflow:hidden;}
-.confetti-wrap{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;}
-.confetto{position:absolute;border-radius:2px;animation:fall linear infinite;}
-@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(500px) rotate(720deg);opacity:0}}
-.trophy{font-size:64px;animation:trophyPulse 1.2s ease-in-out infinite;position:relative;z-index:1;margin-bottom:10px;}
-@keyframes trophyPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
-.winner-name{font-size:24px;font-weight:800;color:#fff;position:relative;z-index:1;}
-.winner-sub{font-size:13px;color:#CECBF6;margin-top:6px;position:relative;z-index:1;}
-.podium{padding:0 1rem 1.5rem;}
-.podium-card{background:rgba(255,255,255,0.15);border-radius:16px;padding:0.5rem 1rem;backdrop-filter:blur(4px);}
-.pod-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid rgba(255,255,255,0.2);}
-.pod-row:last-child{border-bottom:none;}
-.pod-medal{font-size:18px;width:26px;text-align:center;}
-.pod-name{flex:1;font-size:14px;font-weight:600;color:#fff;}
-.pod-pts{font-size:13px;color:rgba(255,255,255,0.75);}
+.field-inp.error{border-color:#E24B4A;background:#FCEBEB;}
+.err-msg{color:#E24B4A;font-size:12px;margin-bottom:12px;min-height:16px;}
+.btn-purple{width:100%;padding:14px;font-size:15px;font-weight:700;background:#7F77DD;color:#fff;border:none;border-radius:10px;cursor:pointer;}
+.btn-purple:active{opacity:0.85;}
+.btn-purple:disabled{background:#B4B2A9;cursor:not-allowed;}
 </style>
 </head>
 <body>
 
-<!-- JOIN -->
-<div id="join-screen" class="screen active">
-  <div class="join-logo">
-    <svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+<!-- CREATE ROOM -->
+<div id="create-screen" class="screen active">
+  <div class="logo">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
   </div>
-  <div class="join-title">Sala giochi</div>
-  <div class="join-sub">Inserisci il tuo nome e il codice sala</div>
+  <div class="page-title">Sala giochi</div>
+  <div class="page-sub">Crea una stanza e condividi il codice</div>
   <div class="card">
-    <div class="field-lbl">Il tuo nome</div>
-    <input class="field-inp" id="inp-name" type="text" placeholder="Es. Marco" autocomplete="off"
-      oninput="clearErr('inp-name','err-name')" onkeydown="if(event.key==='Enter')joinRoom()"/>
-    <div class="err-msg" id="err-name"></div>
-    <div class="field-lbl">Codice sala</div>
-    <input class="field-inp" id="inp-code" type="text" placeholder="Es. K4F2" autocomplete="off"
-      style="text-transform:uppercase;letter-spacing:0.1em;"
-      oninput="clearErr('inp-code','err-code')" onkeydown="if(event.key==='Enter')joinRoom()"/>
+    <div class="field-lbl">Codice stanza</div>
+    <input class="field-inp" id="inp-code" type="text" placeholder="Es. K4F2" maxlength="6" autocomplete="off"
+      oninput="clearError('inp-code','err-code')"
+      onkeydown="if(event.key==='Enter')createRoom()"/>
     <div class="err-msg" id="err-code"></div>
-    <button class="btn-green" id="btn-join" onclick="joinRoom()">Entra nella sala</button>
+    <button class="btn-purple" id="btn-create" onclick="createRoom()">Crea stanza</button>
   </div>
 </div>
 
-<!-- WAIT -->
-<div id="wait-screen" class="screen">
-  <div class="wait-emoji">⏳</div>
-  <div class="wait-title">Sei dentro!</div>
-  <div class="wait-sub">In attesa che l'host avvii il gioco…</div>
-</div>
-
-<!-- VF GAME — fullscreen -->
-<div id="vf-screen" class="screen">
-  <div id="vf-tap" class="vf-game vf-vero" onclick="tapVF()">
-    <svg id="vf-icon" class="vf-icon" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
-    <div class="vf-word" id="vf-word">VERO</div>
-    <div class="vf-hint" id="vf-hint">Tocca per cambiare</div>
+<!-- GAME ROOM -->
+<div id="room-screen" class="screen">
+  <div class="top-bar">
+    <div class="bar-row">
+      <div><div class="bar-title">Sala giochi</div><div class="bar-sub">Scegli un gioco da avviare</div></div>
+      <div><div class="bar-right-lbl">Codice stanza</div><div class="bar-right-val" id="room-code-display">—</div></div>
+    </div>
   </div>
-  <div class="vf-footer">
-    <span class="name-badge" id="vf-name">—</span>
-    <span class="pts-badge" id="vf-pts">0 punti</span>
+  <div class="body">
+    <div class="sec">Giocatori connessi</div>
+    <div class="players-row" id="players-row"><span style="font-size:13px;color:#888780;">Nessuno ancora…</span></div>
+    <div class="sec">Giochi disponibili</div>
+    <div class="games-grid">
+      <div class="game-card" onclick="launchGame('vero-falso')">
+        <div class="g-icon g-teal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F6E56" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+        </div>
+        <div class="game-name">Vero o falso</div>
+        <div class="game-desc">I giocatori rispondono, l'host rivela la risposta.</div>
+        <span class="ready-pill">Pronto</span>
+      </div>
+      <div class="game-card" onclick="launchGame('caccia-parola')">
+        <div class="g-icon g-purple">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        </div>
+        <div class="game-name">Caccia alla parola</div>
+        <div class="game-desc">Trova la risposta nascosta nella griglia.</div>
+        <span class="ready-pill">Pronto</span>
+      </div>
+      <div class="empty-card">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B4B2A9" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        <span>Prossimo gioco</span>
+      </div>
+      <div class="empty-card">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B4B2A9" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        <span>Prossimo gioco</span>
+      </div>
+    </div>
+    <a class="setup-link" href="setup.html">Gestisci liste parole →</a>
   </div>
-</div>
-
-<!-- VF RESULT — fullscreen -->
-<div id="vf-result-screen" class="screen">
-  <div class="result-emoji" id="result-emoji">🎉</div>
-  <div id="result-title" class="result-correct">Corretto!</div>
-  <div class="result-pts" id="result-pts"></div>
-  <div class="result-wait">In attesa della prossima domanda…</div>
-</div>
-
-<!-- WS GAME -->
-<div id="ws-screen" class="screen">
-  <div class="ws-top">
-    <div class="timer-b" id="ws-timer">⏱ 3:00</div>
-    <div class="score-b" id="ws-score">⭐ 0 trovate</div>
-  </div>
-  <div class="q-card">
-    <div class="q-deco"></div>
-    <div class="q-lbl">Trova la parola</div>
-    <div class="q-txt" id="ws-question">Caricamento…</div>
-    <div class="q-num" id="ws-qnum"></div>
-  </div>
-  <div class="prog-track"><div class="prog-fill" id="ws-prog"></div></div>
-  <div class="ws-grid" id="ws-grid"></div>
-  <div class="ws-hint">Scorri per selezionare la risposta</div>
-</div>
-
-<!-- WINNER -->
-<div id="winner-screen" class="screen">
-  <div class="winner-top">
-    <div class="confetti-wrap" id="confetti"></div>
-    <div class="trophy">🏆</div>
-    <div class="winner-name" id="w-name">—</div>
-    <div class="winner-sub" id="w-sub"></div>
-  </div>
-  <div class="podium"><div class="podium-card" id="podium"></div></div>
 </div>
 
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import{getDatabase,ref,set,get,onValue,update}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import{getDatabase,ref,set,get,onValue}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig={databaseURL:"https://vero-falso-default-rtdb.europe-west1.firebasedatabase.app"};
 const app=initializeApp(firebaseConfig);
 const db=getDatabase(app);
-
-let roomCode='',playerName='',myPts=0,vfCurrent='vero',hasAnswered=false;
-let wsQuestions=[],wsCurrentQ=0,wsScore=0,wsTimer=null;
-let wsSelecting=false,wsSelStart=null,wsSelCells=[];
+let roomCode='';
 
 function show(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-/* ── ERROR HELPERS ── */
-window.clearErr=function(inputId,errId){
-  document.getElementById(inputId).classList.remove('err');
-  document.getElementById(errId).textContent='';
-};
-function setErr(inputId,errId,msg){
-  document.getElementById(inputId).classList.add('err');
+function setError(inputId,errId,msg){
+  document.getElementById(inputId).classList.add('error');
   document.getElementById(errId).textContent=msg;
-  document.getElementById(inputId).focus();
 }
 
-/* ── JOIN ── */
-window.joinRoom=async function(){
-  playerName=document.getElementById('inp-name').value.trim();
-  roomCode=document.getElementById('inp-code').value.trim().toUpperCase();
-  if(!playerName){setErr('inp-name','err-name','Inserisci il tuo nome.');return;}
-  if(!roomCode){setErr('inp-code','err-code','Inserisci il codice della sala.');return;}
-  const btn=document.getElementById('btn-join');
-  btn.disabled=true;btn.textContent='Connessione…';
+window.clearError=function(inputId,errId){
+  document.getElementById(inputId).classList.remove('error');
+  document.getElementById(errId).textContent='';
+};
+
+window.createRoom=async function(){
+  const code=document.getElementById('inp-code').value.trim().toUpperCase();
+  if(!code){setError('inp-code','err-code','Inserisci un codice per la stanza.');return;}
+  if(code.length<2){setError('inp-code','err-code','Il codice deve avere almeno 2 caratteri.');return;}
+
+  const btn=document.getElementById('btn-create');
+  btn.disabled=true;btn.textContent='Creazione…';
+
   try{
-    const snap=await get(ref(db,`rooms/${roomCode}`));
-    if(!snap.exists()){
-      setErr('inp-code','err-code','Stanza non trovata. Controlla il codice.');
-      btn.disabled=false;btn.textContent='Entra nella sala';return;
-    }
-    if(snap.val().status==='finished'){
-      setErr('inp-code','err-code','Questa partita è già terminata.');
-      btn.disabled=false;btn.textContent='Entra nella sala';return;
-    }
-    if(snap.val().players&&snap.val().players[playerName]){
-      setErr('inp-name','err-name','Nome già in uso in questa sala.');
-      btn.disabled=false;btn.textContent='Entra nella sala';return;
-    }
-    await set(ref(db,`rooms/${roomCode}/players/${playerName}`),{pts:0,joined:true});
-    document.getElementById('vf-name').textContent=playerName;
-    show('wait-screen');
-    listenRoom();
+    // Sovrascrive sempre — l'host può sempre rientrare con lo stesso codice
+    await set(ref(db,`rooms/${code}`),{status:'lobby',created:Date.now()});
+    roomCode=code;
+    document.getElementById('room-code-display').textContent=code;
+    show('room-screen');
+    listenPlayers();
   }catch(e){
-    setErr('inp-code','err-code','Errore di connessione. Riprova.');
-    btn.disabled=false;btn.textContent='Entra nella sala';
+    setError('inp-code','err-code','Errore di connessione. Riprova.');
+    btn.disabled=false;btn.textContent='Crea stanza';
   }
 };
 
-/* ── LISTEN TO ROOM ── */
-function listenRoom(){
-  onValue(ref(db,`rooms/${roomCode}/game`),snap=>{
-    const g=snap.val();
-    if(!g)return;
-    // Vero o Falso
-    if(g.type==='vero-falso'){
-      if(g.status==='playing'&&g.round!==undefined){
-        // nuova manche — mostra gioco
-        hasAnswered=false;vfCurrent='vero';
-        setVFState('vero',false);
-        show('vf-screen');
-      }
-      if(g.status==='playing'&&g.correct){
-        // host ha rivelato — mostra risultato
-        const correct=vfCurrent===g.correct;
-        if(correct)myPts++;
-        update(ref(db,`rooms/${roomCode}/players/${playerName}`),{pts:myPts,answer:null});
-        showVFResult(correct);
-      }
-    }
-    // Caccia alla parola
-    if(g.type==='caccia-parola'&&g.status==='playing'&&g.grid){
-      wsQuestions=g.questions||[];wsCurrentQ=0;wsScore=0;
-      buildWSGrid(g.grid);showWSQuestion(0);
-      show('ws-screen');
-      startWSTimer(g.timeLimit||180);
-    }
-    // Fine partita
-    if(g.status==='finished'){
-      clearInterval(wsTimer);
-      showWinner(g.scores);
-    }
+function listenPlayers(){
+  onValue(ref(db,`rooms/${roomCode}/players`),snap=>{
+    const players=snap.val()||{};
+    const names=Object.keys(players);
+    document.getElementById('players-row').innerHTML=names.length===0
+      ?'<span style="font-size:13px;color:#888780;">Nessuno ancora…</span>'
+      :names.map(n=>`<div class="p-chip"><div class="p-dot"></div>${n}</div>`).join('');
   });
 }
 
-/* ── VERO O FALSO ── */
-function setVFState(v,answered){
-  const tap=document.getElementById('vf-tap');
-  const icon=document.getElementById('vf-icon');
-  const word=document.getElementById('vf-word');
-  const hint=document.getElementById('vf-hint');
-  tap.className='vf-game '+(v==='vero'?'vf-vero':'vf-falso');
-  icon.innerHTML=v==='vero'?'<path d="M5 12l5 5L20 7"/>':'<path d="M18 6L6 18M6 6l12 12"/>';
-  word.textContent=v==='vero'?'VERO':'FALSO';
-  hint.textContent=answered?'Risposta inviata!':'Tocca per cambiare';
-  hint.style.opacity=answered?'0.9':'0.7';
-}
-
-window.tapVF=function(){
-  vfCurrent=vfCurrent==='vero'?'falso':'vero';
-  hasAnswered=true;
-  setVFState(vfCurrent,true);
-  set(ref(db,`rooms/${roomCode}/players/${playerName}/answer`),vfCurrent);
+window.launchGame=function(type){
+  if(!roomCode){return;}
+  window.location.href=`${type}.html?room=${roomCode}`;
 };
-
-function showVFResult(correct){
-  document.getElementById('result-emoji').textContent=correct?'🎉':'😬';
-  const t=document.getElementById('result-title');
-  t.className=correct?'result-correct':'result-wrong';
-  t.textContent=correct?'Corretto! Bravissimo!':'Sbagliato!';
-  document.getElementById('result-pts').textContent=(correct?'+1 punto — ':'')+'Totale: '+myPts+' pt';
-  document.getElementById('vf-pts').textContent=myPts+' punti';
-  show('vf-result-screen');
-}
-
-/* ── CACCIA ALLA PAROLA ── */
-function buildWSGrid(flat){
-  const grid=document.getElementById('ws-grid');
-  grid.innerHTML='';
-  for(let i=0;i<100;i++){
-    const c=document.createElement('div');
-    c.className='cell';c.textContent=flat[i];c.dataset.idx=i;
-    grid.appendChild(c);
-  }
-  setupWSTouch(grid);
-}
-
-function showWSQuestion(idx){
-  if(idx>=wsQuestions.length)return;
-  const q=wsQuestions[idx];
-  document.getElementById('ws-question').textContent=q.question;
-  document.getElementById('ws-qnum').textContent='Domanda '+(idx+1)+' di '+wsQuestions.length;
-  document.getElementById('ws-prog').style.width=Math.round((idx/wsQuestions.length)*100)+'%';
-}
-
-function setupWSTouch(grid){
-  function cellAt(x,y){const e=document.elementFromPoint(x,y);return e&&e.classList.contains('cell')?e:null;}
-  function startSel(c){wsSelecting=true;wsSelStart=c;wsSelCells=[c];c.classList.add('selecting');}
-  function moveSel(c){
-    if(!wsSelecting||!c)return;
-    wsSelCells.forEach(e=>{if(!e.classList.contains('found'))e.classList.remove('selecting');});
-    wsSelCells=getLine(parseInt(wsSelStart.dataset.idx),parseInt(c.dataset.idx),grid);
-    wsSelCells.forEach(e=>{if(!e.classList.contains('found'))e.classList.add('selecting');});
-  }
-  function endSel(){
-    if(!wsSelecting)return;wsSelecting=false;
-    const word=wsSelCells.map(c=>c.textContent).join('');
-    const ans=(wsQuestions[wsCurrentQ]?.answer||'').toUpperCase();
-    if(word===ans||word===ans.split('').reverse().join('')){
-      wsSelCells.forEach(c=>{c.classList.remove('selecting');c.classList.add('found');});
-      wsScore++;
-      document.getElementById('ws-score').textContent='⭐ '+wsScore+' trovate';
-      update(ref(db,`rooms/${roomCode}/players/${playerName}`),{pts:wsScore});
-      wsCurrentQ++;
-      setTimeout(()=>showWSQuestion(wsCurrentQ),400);
-    }else{
-      wsSelCells.forEach(c=>{c.classList.remove('selecting');c.classList.add('wrong');});
-      setTimeout(()=>wsSelCells.forEach(c=>c.classList.remove('wrong')),1000);
-    }
-    wsSelCells=[];wsSelStart=null;
-  }
-  grid.addEventListener('touchstart',e=>{e.preventDefault();const c=cellAt(e.touches[0].clientX,e.touches[0].clientY);if(c)startSel(c);},{passive:false});
-  grid.addEventListener('touchmove',e=>{e.preventDefault();moveSel(cellAt(e.touches[0].clientX,e.touches[0].clientY));},{passive:false});
-  grid.addEventListener('touchend',e=>{e.preventDefault();endSel();},{passive:false});
-  grid.addEventListener('mousedown',e=>{const c=e.target.closest('.cell');if(c)startSel(c);});
-  grid.addEventListener('mouseover',e=>{const c=e.target.closest('.cell');if(c)moveSel(c);});
-  window.addEventListener('mouseup',endSel);
-}
-
-function getLine(a,b,grid){
-  const cells=Array.from(grid.querySelectorAll('.cell'));
-  const r1=Math.floor(a/10),c1=a%10,r2=Math.floor(b/10),c2=b%10;
-  const dr=r2-r1,dc=c2-c1,len=Math.max(Math.abs(dr),Math.abs(dc));
-  if(len===0)return[cells[a]];
-  if(Math.abs(dr)!==Math.abs(dc)&&dr!==0&&dc!==0)return[cells[a]];
-  const sr=dr===0?0:dr/Math.abs(dr),sc=dc===0?0:dc/Math.abs(dc);
-  const result=[];
-  for(let i=0;i<=len;i++){const idx=(r1+sr*i)*10+(c1+sc*i);if(idx>=0&&idx<100)result.push(cells[idx]);}
-  return result;
-}
-
-function startWSTimer(seconds){
-  clearInterval(wsTimer);let s=seconds;
-  wsTimer=setInterval(()=>{
-    s--;
-    const m=Math.floor(s/60);
-    document.getElementById('ws-timer').textContent='⏱ '+m+':'+String(s%60).padStart(2,'0');
-    if(s<=0){clearInterval(wsTimer);update(ref(db,`rooms/${roomCode}/players/${playerName}`),{pts:wsScore,done:true});}
-  },1000);
-}
-
-/* ── WINNER ── */
-function showWinner(scores){
-  clearInterval(wsTimer);
-  show('winner-screen');
-  const finalScores=(scores&&Object.keys(scores).length)?scores:{[playerName]:myPts};
-  const sorted=Object.entries(finalScores).sort((a,b)=>b[1]-a[1]);
-  document.getElementById('w-name').textContent=(sorted[0]?.[0]||playerName)+' vince!';
-  document.getElementById('w-sub').textContent='Con '+Math.round(sorted[0]?.[1]||myPts)+' punti totali';
-  const medals=['🥇','🥈','🥉'];
-  document.getElementById('podium').innerHTML=sorted.slice(0,4).map(([name,pts],i)=>
-    `<div class="pod-row"><span class="pod-medal">${medals[i]||i+1}</span><span class="pod-name">${name}</span><span class="pod-pts">${Math.round(pts)} pt</span></div>`
-  ).join('');
-  spawnConfetti();
-}
-
-function spawnConfetti(){
-  const wrap=document.getElementById('confetti');wrap.innerHTML='';
-  const colors=['#CECBF6','#9FE1CB','#FAC775','#F4C0D1','#fff','#EF9F27'];
-  for(let i=0;i<32;i++){
-    const c=document.createElement('div');c.className='confetto';
-    c.style.cssText=`left:${Math.random()*100}%;background:${colors[i%colors.length]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*1.5}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;`;
-    wrap.appendChild(c);
-  }
-}
 </script>
 </body>
 </html>
